@@ -83,6 +83,7 @@ func (u *Users) Get(org string) *User {
 	return nil
 }
 
+// GetSps 用已知的sp获取到所在org的全部sp
 func (u *Users) GetSps(inputSp string) []string {
 	for _, user := range u.List {
 		for _, sp := range user.Sps {
@@ -149,7 +150,7 @@ func NewDataSets() *DataSets {
 	return new(DataSets)
 }
 
-// ReadDataSetsFromFile 从JSON文件中读取Users结构体
+// ReadDataSetsFromFile 从JSON文件中读取DataSets结构体
 func (d *DataSets) ReadDataSetsFromFile() error {
 	// 读取文件内容
 	content, err := os.ReadFile(dataSetsJson)
@@ -173,7 +174,7 @@ func (d *DataSets) ReadDataSetsFromFile() error {
 	return nil
 }
 
-// WriteDataSetsToFile 将Users结构体写入到JSON文件中
+// WriteDataSetsToFile 将DataSets结构体写入到JSON文件中
 func (d *DataSets) WriteDataSetsToFile() error {
 	// 序列化JSON数据
 	data, err := json.Marshal(d)
@@ -242,6 +243,8 @@ func (d *DataSet) Get(pieceCid string) *Piece {
 	}
 	return nil
 }
+
+// GetSize 返回符合条件的Pieces,总的pieceSize,总的carSize.会判断副本的数量，组织内其他sp是否已经发送，已经发送的次数是否小于等于repeat
 func (d *DataSet) GetSize(inputSp string, size int64, sps []string) (*DataSet, int64, int64) {
 	outPieces := NewDataSet()
 	pieceSize := int64(0)
