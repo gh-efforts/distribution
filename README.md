@@ -17,9 +17,6 @@ OPTIONS:
    --org value, -u value  specify org name
    --force                force update user,cover (default: false)
    --help, -h             show help
-
-
-$ ./dist dataset add -n hofe -f test/dataset.json
 ```
 #### 删除
 ```bash
@@ -64,6 +61,8 @@ OPTIONS:
 --filepath value, -f value  specify dataSet filepath. must include pieceCid,pieceSize,carSize
 --force                     force update dataset,cover (default: false)
 --help, -h                  show help
+
+$ ./dist dataset add -n hofe -f test/dataset.json
 ```
 
 #### 删除数据集
