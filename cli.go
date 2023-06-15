@@ -468,7 +468,7 @@ var pieceUpdate = &cli.Command{
 		pieceCid := ctx.String("pieceCid")
 		pieceSize := ctx.Int64("pieceSize")
 		carSize := ctx.Int64("carSize")
-		sps := strings.Split(strings.TrimSpace(ctx.String("sp")), ",")
+		sps := strings.Split(strings.TrimSpace(ctx.String("sps")), ",")
 
 		dataSets := NewDataSets()
 		err := dataSets.ReadDataSetsFromFile()
@@ -480,9 +480,11 @@ var pieceUpdate = &cli.Command{
 		piece.PieceCid = pieceCid
 		piece.PieceSize = pieceSize
 		piece.CarSize = carSize
-		for i, sp := range sps {
-			piece.SpInfos[i].Sp = sp
-			piece.SpInfos[i].Num = 1
+		for _, sp := range sps {
+			spInfo := new(SpInfo)
+			spInfo.Sp = sp
+			spInfo.Num = 1
+			piece.SpInfos = append(piece.SpInfos, spInfo)
 		}
 
 		dataSet := dataSets.GetDataset(dataSetName)
