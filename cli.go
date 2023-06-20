@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/liushuochen/gotable"
-	"github.com/urfave/cli/v2"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/liushuochen/gotable"
+	"github.com/urfave/cli/v2"
 )
 
 var userManager = &cli.Command{
@@ -201,7 +202,7 @@ var datasetView = &cli.Command{
 			fmt.Println(data)
 			return nil
 		}
-		table, err := gotable.Create("dataSetName", "spSum", "pieceSum", "pieceSize(TiB)", "carSize(TiB)")
+		table, err := gotable.Create("dataSetName", "duplicate", "spSum", "pieceSum", "pieceSize(TiB)", "carSize(TiB)")
 		if err != nil {
 			return err
 		}
@@ -215,7 +216,7 @@ var datasetView = &cli.Command{
 			}
 			pieceSum = len(dataSet.Pieces)
 
-			table.AddRow([]string{dataSet.DataSetName, strconv.Itoa(spSum), strconv.Itoa(pieceSum), strconv.FormatFloat(float64(pieceSize)/(1<<40), 'f', -1, 64), strconv.FormatFloat(float64(carSize)/(1<<40), 'f', -1, 64)})
+			table.AddRow([]string{dataSet.DataSetName, strconv.Itoa(dataSet.Duplicate), strconv.Itoa(spSum), strconv.Itoa(pieceSum), strconv.FormatFloat(float64(pieceSize)/(1<<40), 'f', -1, 64), strconv.FormatFloat(float64(carSize)/(1<<40), 'f', -1, 64)})
 
 		}
 
@@ -233,6 +234,12 @@ var datasetUpdate = &cli.Command{
 			Required: true,
 			Aliases:  []string{"n"},
 		},
+		&cli.IntFlag{
+			Name:     "duplicate",
+			Usage:    "specify dataSet duplicate",
+			Required: true,
+			Aliases:  []string{"d"},
+		},
 		&cli.StringFlag{
 			Name:     "filepath",
 			Usage:    "specify dataSet filepath. must include pieceCid,pieceSize,carSize",
@@ -248,6 +255,7 @@ var datasetUpdate = &cli.Command{
 	Action: func(ctx *cli.Context) error {
 		dataSetName := ctx.String("name")
 		filePath := ctx.String("filepath")
+		duplicate := ctx.Int("duplicate")
 
 		datasets := NewDataSets()
 		dataSet := NewDataSet()
@@ -273,6 +281,7 @@ var datasetUpdate = &cli.Command{
 		}
 
 		dataSet.DataSetName = dataSetName
+		dataSet.Duplicate = duplicate
 
 		err = datasets.ReadDataSetsFromFile()
 		if err != nil {
@@ -280,7 +289,7 @@ var datasetUpdate = &cli.Command{
 		}
 		if ok := datasets.GetDataset(dataSetName); ok != nil {
 			if !ctx.Bool("force") {
-				return fmt.Errorf("already exist dateset %s, if want to update, please add --force\n", dataSet.DataSetName)
+				return fmt.Errorf("already exist dateset %s, if want to update, please add --force", dataSet.DataSetName)
 			} else {
 				datasets.UpdateDataSet(dataSet)
 			}
@@ -359,8 +368,7 @@ var datasetGet = &cli.Command{
 		},
 		&cli.IntFlag{
 			Name:  "duplicate",
-			Usage: "specify dataset duplicate",
-			Value: 10,
+			Usage: "specify dataset duplicate, default use dataSet.Duplicate",
 		},
 		&cli.Int64Flag{
 			Name:  "repeat",
@@ -387,7 +395,9 @@ var datasetGet = &cli.Command{
 		dataSetName := ctx.String("name")
 		sp := ctx.String("sp")
 		size := int64(ctx.Float64("size") * (1 << 40))
-		duplicate = ctx.Int("duplicate")
+		if ctx.IsSet("duplicate") {
+			duplicate = ctx.Int("duplicate")
+		}
 		repeat = ctx.Int("repeat")
 		prefix := ctx.String("prefix")
 		suffix := ctx.String("suffix")

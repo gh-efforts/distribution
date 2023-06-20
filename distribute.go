@@ -136,6 +136,7 @@ type Piece struct {
 	SpInfos   []*SpInfo `json:"spInfos"`
 }
 type DataSet struct {
+	Duplicate   int      `json:"duplicate"`
 	DataSetName string   `json:"dataSetName"`
 	Pieces      []*Piece `json:"pieces"`
 }
@@ -250,11 +251,15 @@ func (d *DataSet) GetSize(inputSp string, size int64, sps []string) (*DataSet, i
 	pieceSize := int64(0)
 	carSize := int64(0)
 
+	if duplicate == 0 {
+		duplicate = d.Duplicate
+	}
+
 	for _, piece := range d.Pieces {
 		if pieceSize >= size {
 			continue
 		}
-		if len(piece.SpInfos) > duplicate {
+		if len(piece.SpInfos) >= duplicate {
 			continue
 		}
 		var haveSP bool

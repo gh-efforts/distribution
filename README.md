@@ -1,5 +1,5 @@
 # distribution
-> 用于filplus数据分配使用，默认参数10个副本，不允许数据重复  
+> 用于filplus数据分配使用，默认使用添加数据集时设置的副本数量，不允许数据重复  
 
 ## 使用方法
 ### 增删改查用户/组织
@@ -51,18 +51,19 @@ $ ./dist user view
 ```bash
 $ ./dist dataset add -h
 NAME:
-dist dataset add - add a dataset
+   dist dataset add - add a dataset
 
 USAGE:
-dist dataset add [command options] [arguments...]
+   dist dataset add [command options] [arguments...]
 
 OPTIONS:
---name value, -n value      specify dataSet name
---filepath value, -f value  specify dataSet filepath. must include pieceCid,pieceSize,carSize
---force                     force update dataset,cover (default: false)
---help, -h                  show help
+   --name value, -n value       specify dataSet name
+   --duplicate value, -d value  specify dataSet duplicate (default: 0)
+   --filepath value, -f value   specify dataSet filepath. must include pieceCid,pieceSize,carSize
+   --force                      force update dataset,cover (default: false)
+   --help, -h                   show help
 
-$ ./dist dataset add -n hofe -f test/dataset.json
+$ ./dist dataset add -n hofe -f test/dataset.json -d 10
 ```
 
 #### 删除数据集
@@ -81,16 +82,16 @@ OPTIONS:
 ```
 #### 查看数据集
 ```bash
-$ ./dist dataset view  
-+-------------+-------+----------+----------------+---------------------+
-| dataSetName | spSum | pieceSum | pieceSize(TiB) |    carSize(TiB)     |
-+-------------+-------+----------+----------------+---------------------+
-|    wyth     |   1   |    10    |     0.3125     | 0.17188961445026507 |
-|    hofe     |   0   |    10    |     0.3125     | 0.17188961445026507 |
-|    hofe1    |   0   |    10    |     0.3125     | 0.17188961445026507 |
-|    hofe2    |   0   |    10    |     0.3125     | 0.17188961445026507 |
-|   ho3fe2    |   0   |    10    |     0.3125     | 0.17188961445026507 |
-+-------------+-------+----------+----------------+---------------------+
+$ ./dist dataset view 
++-------------+-----------+-------+----------+----------------+---------------------+
+| dataSetName | duplicate | spSum | pieceSum | pieceSize(TiB) |    carSize(TiB)     |
++-------------+-----------+-------+----------+----------------+---------------------+
+|    wyth     |     0     |   1   |    10    |     0.3125     | 0.17188961445026507 |
+|    hofe     |     0     |   0   |    10    |     0.3125     | 0.17188961445026507 |
+|    hofe1    |     0     |   0   |    10    |     0.3125     | 0.17188961445026507 |
+|    hofe2    |     0     |   0   |    10    |     0.3125     | 0.17188961445026507 |
+|   ho3fe2    |     0     |   0   |    10    |     0.3125     | 0.17188961445026507 |
++-------------+-----------+-------+----------+----------------+---------------------+
 ```
 ### 获取合适的文件下载链接
 ```bash
