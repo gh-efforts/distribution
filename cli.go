@@ -212,7 +212,9 @@ var datasetView = &cli.Command{
 			for _, piece := range dataSet.Pieces {
 				pieceSize += piece.PieceSize
 				carSize += piece.CarSize
-				spSum = len(piece.SpInfos)
+				if len(piece.SpInfos) > spSum {
+					spSum = len(piece.SpInfos)
+				}
 			}
 			pieceSum = len(dataSet.Pieces)
 
